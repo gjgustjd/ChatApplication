@@ -12,6 +12,8 @@
         style="@style/boldBlack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
         android:text="성명"
         android:textSize="18dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -26,7 +28,7 @@
         android:textSize="18dp"
         android:textStyle="normal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/textView"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <TextView
