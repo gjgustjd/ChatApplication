@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "218608698906",
+    "firebase_url": "https://chatapplication-be44b-default-rtdb.firebaseio.com",
     "project_id": "chatapplication-be44b",
     "storage_bucket": "chatapplication-be44b.appspot.com"
   },
@@ -13,6 +14,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "218608698906-jra606voanvdqovhq4l2msi7ehulr1fp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.miso.chatapplication",
+            "certificate_hash": "261b00ef5c68b5d2d651e11fc8daf93f7763d68e"
+          }
+        },
         {
           "client_id": "218608698906-u8i9gc76k8cc7tj0jgf1a8ud4888elfb.apps.googleusercontent.com",
           "client_type": 3

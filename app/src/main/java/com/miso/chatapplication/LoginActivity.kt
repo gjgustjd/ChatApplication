@@ -31,6 +31,7 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initializeView()
+        initializeListener()
     }
 
     fun initializeView() {
@@ -42,6 +43,14 @@ class LoginActivity : AppCompatActivity() {
             .requestEmail()
             .build()
         googleSignInClient = GoogleSignIn.getClient(this, gso)
+    }
+
+    fun initializeListener()
+    {
+        btn_googleSiginIn.setOnClickListener()
+        {
+            signIn()
+        }
     }
 
     fun signIn() {
@@ -60,6 +69,7 @@ class LoginActivity : AppCompatActivity() {
                 val account = task.getResult(ApiException::class.java)
                 firebaseAuthWithGoogle(account)
             } catch (e: ApiException) {
+                e.printStackTrace()
             }
         }
     }
@@ -80,9 +90,9 @@ class LoginActivity : AppCompatActivity() {
     }
     private fun updateUI(user: FirebaseUser?) { //update ui code here
         if (user != null) {
-//            val intent = Intent(this, AfterActivity::class.java)
-//            startActivity(intent)
-//            finish()
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
         }
     }
 }
