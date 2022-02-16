@@ -17,12 +17,12 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <EditText
-            android:id="@+id/edt_id"
+            android:id="@+id/edt_email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
             android:ems="10"
-            android:hint="ID"
+            android:hint="Email"
             android:inputType="textPersonName"
             android:textColorHint="#B8B8B8"
             app:layout_constraintBottom_toTopOf="@id/edt_password"
@@ -43,7 +43,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.502"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/edt_id" />
+            app:layout_constraintTop_toBottomOf="@+id/edt_email" />
 
         <com.google.android.gms.common.SignInButton
             android:id="@+id/btn_login"
