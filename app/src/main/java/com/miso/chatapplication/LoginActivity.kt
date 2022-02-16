@@ -4,6 +4,7 @@ import android.R
 import android.R.attr
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -24,6 +25,7 @@ class LoginActivity : AppCompatActivity() {
     lateinit var auth: FirebaseAuth
     lateinit var googleSignInClient: GoogleSignInClient
     lateinit var btn_googleSiginIn: SignInButton
+    lateinit var btn_signUp:Button
     lateinit var binding: ActivityLoginBinding
     val SIGN_IN_CODE = 9001
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,6 +38,7 @@ class LoginActivity : AppCompatActivity() {
 
     fun initializeView() {
         btn_googleSiginIn = binding.btnLogin
+        btn_signUp = binding.btnSignup
         auth = FirebaseAuth.getInstance()
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -43,6 +46,7 @@ class LoginActivity : AppCompatActivity() {
             .requestEmail()
             .build()
         googleSignInClient = GoogleSignIn.getClient(this, gso)
+
     }
 
     fun initializeListener()
@@ -50,6 +54,10 @@ class LoginActivity : AppCompatActivity() {
         btn_googleSiginIn.setOnClickListener()
         {
             signIn()
+        }
+        btn_signUp.setOnClickListener()
+        {
+            startActivity(Intent(this,SignUpActivity::class.java))
         }
     }
 
