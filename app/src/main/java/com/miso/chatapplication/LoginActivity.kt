@@ -4,7 +4,10 @@ import android.R
 import android.R.attr
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
+import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -25,7 +28,10 @@ class LoginActivity : AppCompatActivity() {
     lateinit var auth: FirebaseAuth
     lateinit var googleSignInClient: GoogleSignInClient
     lateinit var btn_googleSiginIn: SignInButton
-    lateinit var btn_signUp:Button
+    lateinit var btn_signUp: Button
+    lateinit var btn_signIn: Button
+    lateinit var edt_email: EditText
+    lateinit var edt_password: EditText
     lateinit var binding: ActivityLoginBinding
     val SIGN_IN_CODE = 9001
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,8 +43,12 @@ class LoginActivity : AppCompatActivity() {
     }
 
     fun initializeView() {
-        btn_googleSiginIn = binding.btnLogin
+        btn_googleSiginIn = binding.btnLoginGoogle
         btn_signUp = binding.btnSignup
+        btn_signIn = binding.btnSignIn
+        edt_email = binding.edtEmail
+        edt_password = binding.edtPassword
+
         auth = FirebaseAuth.getInstance()
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -49,15 +59,18 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
-    fun initializeListener()
-    {
+    fun initializeListener() {
         btn_googleSiginIn.setOnClickListener()
         {
             signIn()
         }
+        btn_signIn.setOnClickListener()
+        {
+            signInWithEmailAndPassword()
+        }
         btn_signUp.setOnClickListener()
         {
-            startActivity(Intent(this,SignUpActivity::class.java))
+            startActivity(Intent(this, SignUpActivity::class.java))
         }
     }
 
@@ -66,11 +79,26 @@ class LoginActivity : AppCompatActivity() {
         startActivityForResult(signInIntent, SIGN_IN_CODE)
     }
 
+    fun signInWithEmailAndPassword() {
+        if(edt_email.text.toString().isNullOrBlank() && edt_password.text.toString().isNullOrBlank())
+            Toast.makeText(this,"아이디 또는 패스워드를 입력해주세요",Toast.LENGTH_SHORT).show()
+
+        auth.signInWithEmailAndPassword(edt_email.text.toString(), edt_password.text.toString()).addOnCompleteListener(this) { task ->
+            if (task.isSuccessful) {
+                Log.d("로그인", "성공")
+                val user = auth.currentUser
+                updateUI (user)
+                finish ()
+            } else {
+                Toast.makeText(this,"로그인에 실패하였습니다.",Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if(requestCode==SIGN_IN_CODE)
-        {
+        if (requestCode == SIGN_IN_CODE) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
                 // Google Sign In was successful, authenticate with Firebase
@@ -87,15 +115,14 @@ class LoginActivity : AppCompatActivity() {
             .addOnCompleteListener(this,
                 OnCompleteListener<AuthResult?> { task ->
                     if (task.isSuccessful) {
-                        // Sign in success, update UI with the signed-in user's information
                         val user: FirebaseUser = auth.currentUser!!
                         updateUI(user)
                     } else {
-                        // If sign in fails, display a message to the user.
-                        updateUI(null)
+                        Toast.makeText(this,"로그인에 실패하였습니다.",Toast.LENGTH_SHORT).show()
                     }
                 })
     }
+
     private fun updateUI(user: FirebaseUser?) { //update ui code here
         if (user != null) {
             val intent = Intent(this, MainActivity::class.java)
