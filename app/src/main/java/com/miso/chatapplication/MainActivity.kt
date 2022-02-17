@@ -39,4 +39,10 @@ class MainActivity : AppCompatActivity() {
             Log.e("firebase", "Error getting data", it)
         }
     }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+        finish()
+    }
 }

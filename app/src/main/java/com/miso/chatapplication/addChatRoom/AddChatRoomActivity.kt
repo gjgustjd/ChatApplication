@@ -3,6 +3,8 @@ package com.miso.chatapplication.addChatRoom
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.widget.EditText
 import android.widget.ImageButton
@@ -25,7 +27,6 @@ class AddChatRoomActivity : AppCompatActivity() {
         binding = ActivityAddChatroomBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initializeView()
-        getUserList()
         setupRecycler()
     }
 
@@ -39,15 +40,21 @@ class AddChatRoomActivity : AppCompatActivity() {
         }
         edt_opponent = binding.edtOpponentName
         recycler_people = binding.recyclerPeoples
+        edt_opponent.addTextChangedListener(object :TextWatcher
+        {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
 
-    }
-    fun getUserList()
-    {
-//        firebaseDatabase.child("users").get().addOnSuccessListener {
-//            Log.i("firebase", "Got value ${it.value}")
-//        }.addOnFailureListener{
-//            Log.e("firebase", "Error getting data", it)
-//        }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                var adapter = recycler_people?.adapter as RecyclerUsersAdapter
+                adapter.searchItem(s.toString())
+            }
+
+        })
+
     }
     fun setupRecycler()
     {

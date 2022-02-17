@@ -19,8 +19,13 @@ import com.miso.chatapplication.model.User
 class RecyclerUsersAdapter(val context: Context) :
     RecyclerView.Adapter<RecyclerUsersAdapter.ViewHolder>() {
     var users: ArrayList<User> = arrayListOf()
+    val allUsers: ArrayList<User> = arrayListOf()
 
     init {
+        setupAllUserList()
+    }
+    fun setupAllUserList()
+    {
         val myUid = FirebaseAuth.getInstance().currentUser?.uid.toString()
         FirebaseDatabase.getInstance().getReference("User").child("users")
             .addValueEventListener(object : ValueEventListener {
@@ -34,15 +39,29 @@ class RecyclerUsersAdapter(val context: Context) :
                         if (item?.uid.equals(myUid)) {
                             continue
                         }
-                        users.add((item!!))
+                        allUsers.add(item!!)
                     }
+                    users = allUsers.clone() as ArrayList<User>
                     notifyDataSetChanged()
                 }
             })
     }
 
+    fun searchItem(target: String) {
+        if(target.equals(""))
+        {
+            users = allUsers.clone() as ArrayList<User>
+        }
+        else {
+            var matchedList = allUsers.filter { it.name!!.contains(target) }
+            users.clear()
+            matchedList.forEach { users.add(it) }
+        }
+        notifyDataSetChanged()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view =   LayoutInflater.from(context).inflate(R.layout.list_person_item, parent, false)
+        val view = LayoutInflater.from(context).inflate(R.layout.list_person_item, parent, false)
         return ViewHolder(ListPersonItemBinding.bind(view))
     }
 
