@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
         btnAddchatRoom = binding.btnNewMessage
         btnAddchatRoom.setOnClickListener()
         {
-           startActivity(Intent(this@MainActivity,AddChatrRoomActivity::class.java))
+           startActivity(Intent(this@MainActivity,AddChatRoomActivity::class.java))
             finish()
         }
     }

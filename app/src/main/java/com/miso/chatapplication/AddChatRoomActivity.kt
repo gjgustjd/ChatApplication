@@ -1,5 +1,6 @@
 package com.miso.chatapplication
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -10,7 +11,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.miso.chatapplication.databinding.ActivityAddChatroomBinding
 
-class AddChatrRoomActivity : AppCompatActivity() {
+class AddChatRoomActivity : AppCompatActivity() {
     lateinit var binding:ActivityAddChatroomBinding
     lateinit var btn_exit: ImageButton
     lateinit var edt_opponent:EditText
@@ -29,6 +30,10 @@ class AddChatrRoomActivity : AppCompatActivity() {
     {
         firebaseDatabase = FirebaseDatabase.getInstance().reference!!
         btn_exit = binding.imgbtnBack
+        btn_exit.setOnClickListener()
+        {
+            startActivity(Intent(this@AddChatRoomActivity,MainActivity::class.java))
+        }
         edt_opponent = binding.edtOpponentName
 
     }

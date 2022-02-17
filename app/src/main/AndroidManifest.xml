@@ -18,7 +18,7 @@
         </activity>
         <activity android:name=".MainActivity">
         </activity>
-        <activity android:name=".AddChatrRoomActivity">
+        <activity android:name=".AddChatRoomActivity">
         </activity>
         <activity android:name=".SignUpActivity">
         </activity>
