@@ -52,7 +52,7 @@ class SignUpActivity : AppCompatActivity() {
         btn_signUp = binding.btnSignup
         edt_email = binding.edtEmail
         edt_password = binding.edtPassword
-        edt_name = binding.edtName
+        edt_name = binding.edtOpponentName
     }
 
     fun initializeListener() {
