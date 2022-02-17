@@ -68,6 +68,16 @@ class RecyclerUsersAdapter(val context: Context) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.txt_name.text = users[position].name
         holder.txt_email.text = users[position].email
+
+        holder.background.setOnClickListener()
+        {
+           addChatRoom(position)
+        }
+    }
+
+    fun addChatRoom(position:Int)
+    {
+        
     }
 
     override fun getItemCount(): Int {
@@ -77,6 +87,7 @@ class RecyclerUsersAdapter(val context: Context) :
 
     inner class ViewHolder(itemView: ListPersonItemBinding) :
         RecyclerView.ViewHolder(itemView.root) {
+        var background = itemView.background
         var txt_name = itemView.txtName
         var txt_email = itemView.txtEmail
     }
