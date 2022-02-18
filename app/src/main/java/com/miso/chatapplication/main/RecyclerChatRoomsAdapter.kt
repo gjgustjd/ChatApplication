@@ -27,21 +27,20 @@ class RecyclerChatRoomsAdapter(val context: Context) :
 
     fun setupAllUserList() {
         val myUid = FirebaseAuth.getInstance().currentUser?.uid.toString()
-        FirebaseDatabase.getInstance().getReference("ChatRoom").child("chatRooms")
-            .addValueEventListener(object : ValueEventListener {
-                override fun onCancelled(error: DatabaseError) {
-                }
 
+        FirebaseDatabase.getInstance().getReference("ChatRoom").child("chatRooms")
+            .orderByChild("users/$myUid").equalTo(true)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {}
                 override fun onDataChange(snapshot: DataSnapshot) {
                     chatRooms.clear()
                     for (data in snapshot.children) {
-                        val item = data.getValue<ChatRoom>()
-                        if (item!!.users!!.contains(myUid))
-                            chatRooms.add(item!!)
+                        chatRooms.add(data.getValue<ChatRoom>()!!)
                     }
                     notifyDataSetChanged()
                 }
             })
+
     }
 
 
