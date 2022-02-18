@@ -36,7 +36,8 @@ class RecyclerChatRoomsAdapter(val context: Context) :
                     chatRooms.clear()
                     for (data in snapshot.children) {
                         val item = data.getValue<ChatRoom>()
-                        chatRooms.add(item!!)
+                        if (item!!.users!!.contains(myUid))
+                            chatRooms.add(item!!)
                     }
                     notifyDataSetChanged()
                 }
