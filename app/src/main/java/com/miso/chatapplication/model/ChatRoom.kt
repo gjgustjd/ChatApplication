@@ -1,8 +1,8 @@
 package com.miso.chatapplication.model
 
 data class ChatRoom (
-    val user:User,
-    val opponent:User,
-    var messages:List<Message>)
+    val users:Map<String,Boolean>?=HashMap(),
+    var messages:List<Message>?= listOf<Message>()
+)
 {
 }

@@ -1,7 +1,5 @@
 package com.miso.chatapplication
 
-import android.R
-import android.R.attr
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -16,12 +14,12 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.miso.chatapplication.databinding.ActivityLoginBinding
+import com.miso.chatapplication.main.MainActivity
 
 
 class LoginActivity : AppCompatActivity() {

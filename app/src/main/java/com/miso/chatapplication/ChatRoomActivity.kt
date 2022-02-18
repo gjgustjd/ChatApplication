@@ -3,15 +3,12 @@ package com.miso.chatapplication
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.widget.Button
 import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.miso.chatapplication.addChatRoom.AddChatRoomActivity
 import com.miso.chatapplication.databinding.ActivityChatroomBinding
-import com.miso.chatapplication.databinding.ActivityMainBinding
+import com.miso.chatapplication.main.MainActivity
 
 class ChatRoomActivity : AppCompatActivity() {
     lateinit var btnBack:ImageButton
