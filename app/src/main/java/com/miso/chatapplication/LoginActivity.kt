@@ -1,5 +1,6 @@
 package com.miso.chatapplication
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -55,6 +56,9 @@ class LoginActivity : AppCompatActivity() {
             .build()
         googleSignInClient = GoogleSignIn.getClient(this, gso)
 
+        var preference = getSharedPreferences("setting", MODE_PRIVATE)
+        edt_email.setText(preference.getString("email", ""))
+        edt_password.setText(preference.getString("password", ""))
     }
 
     fun initializeListener() {
@@ -78,19 +82,22 @@ class LoginActivity : AppCompatActivity() {
     }
 
     fun signInWithEmailAndPassword() {
-        if(edt_email.text.toString().isNullOrBlank() && edt_password.text.toString().isNullOrBlank())
-            Toast.makeText(this,"아이디 또는 패스워드를 입력해주세요",Toast.LENGTH_SHORT).show()
+        if (edt_email.text.toString().isNullOrBlank() && edt_password.text.toString()
+                .isNullOrBlank()
+        )
+            Toast.makeText(this, "아이디 또는 패스워드를 입력해주세요", Toast.LENGTH_SHORT).show()
 
-        auth.signInWithEmailAndPassword(edt_email.text.toString(), edt_password.text.toString()).addOnCompleteListener(this) { task ->
-            if (task.isSuccessful) {
-                Log.d("로그인", "성공")
-                val user = auth.currentUser
-                updateUI (user)
-                finish ()
-            } else {
-                Toast.makeText(this,"로그인에 실패하였습니다.",Toast.LENGTH_SHORT).show()
+        auth.signInWithEmailAndPassword(edt_email.text.toString(), edt_password.text.toString())
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    Log.d("로그인", "성공")
+                    val user = auth.currentUser
+                    updateUI(user)
+                    finish()
+                } else {
+                    Toast.makeText(this, "로그인에 실패하였습니다.", Toast.LENGTH_SHORT).show()
+                }
             }
-        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -107,6 +114,7 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun firebaseAuthWithGoogle(acct: GoogleSignInAccount) {
         val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
         auth.signInWithCredential(credential)
@@ -116,13 +124,17 @@ class LoginActivity : AppCompatActivity() {
                         val user: FirebaseUser = auth.currentUser!!
                         updateUI(user)
                     } else {
-                        Toast.makeText(this,"로그인에 실패하였습니다.",Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "로그인에 실패하였습니다.", Toast.LENGTH_SHORT).show()
                     }
                 })
     }
 
     private fun updateUI(user: FirebaseUser?) { //update ui code here
         if (user != null) {
+            var preference = getSharedPreferences("setting", MODE_PRIVATE).edit()
+            preference.putString("email", edt_email.text.toString())
+            preference.putString("password", edt_password.text.toString())
+            preference.apply()
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()
