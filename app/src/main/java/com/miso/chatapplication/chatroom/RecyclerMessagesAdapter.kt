@@ -11,11 +11,12 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
 import com.miso.chatapplication.R
+import com.miso.chatapplication.databinding.ListTalkItemMineBinding
 import com.miso.chatapplication.databinding.ListTalkItemOthersBinding
 import com.miso.chatapplication.model.Message
 
 class RecyclerMessagesAdapter(val context: Context, val chatRoomKey: String) :
-    RecyclerView.Adapter<RecyclerMessagesAdapter.ViewHolder>() {
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var messages: ArrayList<Message> = arrayListOf()
     val myUid = FirebaseAuth.getInstance().currentUser?.uid.toString()
     val recyclerView = (context as ChatRoomActivity).recycler_talks
@@ -35,43 +36,41 @@ class RecyclerMessagesAdapter(val context: Context, val chatRoomKey: String) :
                         messages.add(data.getValue<Message>()!!)
                     }
                     notifyDataSetChanged()
-                    recyclerView.scrollToPosition(messages.size-1)
+                    recyclerView.scrollToPosition(messages.size - 1)
                 }
             })
 
     }
 
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view =
-            LayoutInflater.from(context).inflate(R.layout.list_talk_item_others, parent, false)
-        return ViewHolder(ListTalkItemOthersBinding.bind(view))
+    override fun getItemViewType(position: Int): Int {
+        return if (messages[position].senderUid.equals(myUid)) 1 else 0
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        var message = messages[position]
-        var sendDate = message.sended_date
-        holder.txtMessage.text = message.content
-        var dateText = ""
-        var timeString = ""
-        if (sendDate.isNotBlank()) {
-            timeString = sendDate.substring(8, 12)
-            var hour = timeString.substring(0, 2)
-            var minute = timeString.substring(2, 4)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder{
+        return when (viewType) {
+            1 -> {
+                val view =
+                    LayoutInflater.from(context)
+                        .inflate(R.layout.list_talk_item_mine, parent, false)
 
-            var timeformat = "%02d:%02d"
-
-            if (hour.toInt() > 11) {
-                dateText += "오후 "
-                dateText += timeformat.format(hour.toInt() - 12, minute.toInt())
-            } else {
-                dateText += "오전 "
-                dateText += timeformat.format(hour.toInt(), minute.toInt())
+                MyMessageViewHolder(ListTalkItemMineBinding.bind(view))
             }
-
+            else -> {
+                val view =
+                    LayoutInflater.from(context)
+                        .inflate(R.layout.list_talk_item_others, parent, false)
+                OtherMessageViewHolder(ListTalkItemOthersBinding.bind(view))
+            }
         }
+    }
 
-        holder.txtDate.text = dateText
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (messages[position].senderUid.equals(myUid)) {
+            (holder as MyMessageViewHolder).bind(position)
+        } else {
+            (holder as OtherMessageViewHolder).bind(position)
+        }
     }
 
 
@@ -80,11 +79,70 @@ class RecyclerMessagesAdapter(val context: Context, val chatRoomKey: String) :
     }
 
 
-    inner class ViewHolder(itemView: ListTalkItemOthersBinding) :
+    inner class OtherMessageViewHolder(itemView: ListTalkItemOthersBinding) :
         RecyclerView.ViewHolder(itemView.root) {
         var background = itemView.background
         var txtMessage = itemView.txtMessage
         var txtDate = itemView.txtDate
+
+        fun bind(position: Int) {
+            var message = messages[position]
+            var sendDate = message.sended_date
+            txtMessage.text = message.content
+            var dateText = ""
+            var timeString = ""
+            if (sendDate.isNotBlank()) {
+                timeString = sendDate.substring(8, 12)
+                var hour = timeString.substring(0, 2)
+                var minute = timeString.substring(2, 4)
+
+                var timeformat = "%02d:%02d"
+
+                if (hour.toInt() > 11) {
+                    dateText += "오후 "
+                    dateText += timeformat.format(hour.toInt() - 12, minute.toInt())
+                } else {
+                    dateText += "오전 "
+                    dateText += timeformat.format(hour.toInt(), minute.toInt())
+                }
+
+            }
+
+            txtDate.text = dateText
+        }
+    }
+
+    inner class MyMessageViewHolder(itemView: ListTalkItemMineBinding) :
+        RecyclerView.ViewHolder(itemView.root) {
+        var background = itemView.background
+        var txtMessage = itemView.txtMessage
+        var txtDate = itemView.txtDate
+
+        fun bind(position: Int) {
+            var message = messages[position]
+            var sendDate = message.sended_date
+            txtMessage.text = message.content
+            var dateText = ""
+            var timeString = ""
+            if (sendDate.isNotBlank()) {
+                timeString = sendDate.substring(8, 12)
+                var hour = timeString.substring(0, 2)
+                var minute = timeString.substring(2, 4)
+
+                var timeformat = "%02d:%02d"
+
+                if (hour.toInt() > 11) {
+                    dateText += "오후 "
+                    dateText += timeformat.format(hour.toInt() - 12, minute.toInt())
+                } else {
+                    dateText += "오전 "
+                    dateText += timeformat.format(hour.toInt(), minute.toInt())
+                }
+
+            }
+
+            txtDate.text = dateText
+        }
     }
 
 }
