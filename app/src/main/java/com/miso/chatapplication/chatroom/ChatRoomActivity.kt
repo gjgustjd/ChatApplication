@@ -86,6 +86,6 @@ class ChatRoomActivity : AppCompatActivity() {
 
     fun setupRecycler() {
         recycler_talks.layoutManager = LinearLayoutManager(this)
-//        recycler_talks.adapter = RecyclerUsersAdapter(this)
+        recycler_talks.adapter = RecyclerMessagesAdapter(this,chatRoomKey)
     }
 }
