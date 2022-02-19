@@ -21,6 +21,7 @@ import com.miso.chatapplication.model.User
 class RecyclerChatRoomsAdapter(val context: Context) :
     RecyclerView.Adapter<RecyclerChatRoomsAdapter.ViewHolder>() {
     var chatRooms: ArrayList<ChatRoom> = arrayListOf()
+    var chatRoomKeys:ArrayList<String> = arrayListOf()
     val myUid = FirebaseAuth.getInstance().currentUser?.uid.toString()
 
     init {
@@ -37,6 +38,7 @@ class RecyclerChatRoomsAdapter(val context: Context) :
                     chatRooms.clear()
                     for (data in snapshot.children) {
                         chatRooms.add(data.getValue<ChatRoom>()!!)
+                        chatRoomKeys.add(data.key!!)
                     }
                     notifyDataSetChanged()
                 }
@@ -58,6 +60,7 @@ class RecyclerChatRoomsAdapter(val context: Context) :
                 override fun onCancelled(error: DatabaseError) {}
                 override fun onDataChange(snapshot: DataSnapshot) {
                     for (data in snapshot.children) {
+                        holder.chatRoomKey = data.key.toString()!!
                         holder.opponentUser = data.getValue<User>()!!
                         holder.txt_name.text = data.getValue<User>()!!.name.toString()
                     }
@@ -68,6 +71,7 @@ class RecyclerChatRoomsAdapter(val context: Context) :
             var intent = Intent(context,ChatRoomActivity::class.java)
             intent.putExtra("ChatRoom",chatRooms.get(position))
             intent.putExtra("Opponent",holder.opponentUser)
+            intent.putExtra("ChatRoomKey",chatRoomKeys[position])
            context.startActivity(intent)
             (context as AppCompatActivity).finish()
         }
@@ -82,6 +86,7 @@ class RecyclerChatRoomsAdapter(val context: Context) :
     inner class ViewHolder(itemView: ListChatroomItemBinding) :
         RecyclerView.ViewHolder(itemView.root) {
         var opponentUser= User("","")
+        var chatRoomKey = ""
         var background = itemView.background
         var txt_name = itemView.txtName
         var txt_message = itemView.txtMessage
