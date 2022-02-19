@@ -1,7 +1,9 @@
 package com.miso.chatapplication.chatroom
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
@@ -18,6 +20,7 @@ import com.miso.chatapplication.model.Message
 class RecyclerMessagesAdapter(val context: Context, val chatRoomKey: String) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var messages: ArrayList<Message> = arrayListOf()
+    var messageKeys: ArrayList<String> = arrayListOf()
     val myUid = FirebaseAuth.getInstance().currentUser?.uid.toString()
     val recyclerView = (context as ChatRoomActivity).recycler_talks
 
@@ -34,6 +37,7 @@ class RecyclerMessagesAdapter(val context: Context, val chatRoomKey: String) :
                     messages.clear()
                     for (data in snapshot.children) {
                         messages.add(data.getValue<Message>()!!)
+                        messageKeys.add(data.key!!)
                     }
                     notifyDataSetChanged()
                     recyclerView.scrollToPosition(messages.size - 1)
@@ -84,11 +88,26 @@ class RecyclerMessagesAdapter(val context: Context, val chatRoomKey: String) :
         var background = itemView.background
         var txtMessage = itemView.txtMessage
         var txtDate = itemView.txtDate
+        var txtIsShown = itemView.txtIsShown
 
         fun bind(position: Int) {
             var message = messages[position]
             var sendDate = message.sended_date
+
             txtMessage.text = message.content
+
+            txtDate.text = getDateText(sendDate)
+
+            if(message.confirmed.equals(true))
+                txtIsShown.visibility = View.GONE
+            else
+                txtIsShown.visibility = View.VISIBLE
+
+            setShown(position)
+        }
+
+        fun getDateText(sendDate:String):String{
+
             var dateText = ""
             var timeString = ""
             if (sendDate.isNotBlank()) {
@@ -105,10 +124,18 @@ class RecyclerMessagesAdapter(val context: Context, val chatRoomKey: String) :
                     dateText += "오전 "
                     dateText += timeformat.format(hour.toInt(), minute.toInt())
                 }
-
             }
+            return dateText
+        }
 
-            txtDate.text = dateText
+        fun setShown(position: Int)
+        {
+            FirebaseDatabase.getInstance().getReference("ChatRoom")
+                .child("chatRooms").child(chatRoomKey).child("messages")
+                .child(messageKeys[position]).child("confirmed").setValue(true)
+                .addOnSuccessListener {
+                    Log.i("checkShown","성공")
+                }
         }
     }
 
@@ -117,11 +144,22 @@ class RecyclerMessagesAdapter(val context: Context, val chatRoomKey: String) :
         var background = itemView.background
         var txtMessage = itemView.txtMessage
         var txtDate = itemView.txtDate
+        var txtIsShown = itemView.txtIsShown
 
         fun bind(position: Int) {
             var message = messages[position]
             var sendDate = message.sended_date
             txtMessage.text = message.content
+
+            txtDate.text = getDateText(sendDate)
+
+            if(message.confirmed.equals(true))
+                txtIsShown.visibility = View.GONE
+            else
+                txtIsShown.visibility = View.VISIBLE
+        }
+
+        fun getDateText(sendDate:String):String{
             var dateText = ""
             var timeString = ""
             if (sendDate.isNotBlank()) {
@@ -138,10 +176,8 @@ class RecyclerMessagesAdapter(val context: Context, val chatRoomKey: String) :
                     dateText += "오전 "
                     dateText += timeformat.format(hour.toInt(), minute.toInt())
                 }
-
             }
-
-            txtDate.text = dateText
+            return dateText
         }
     }
 
