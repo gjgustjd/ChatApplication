@@ -1,10 +1,8 @@
 package com.miso.chatapplication.chatroom
 
 import android.content.Context
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -13,27 +11,23 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
 import com.miso.chatapplication.R
-import com.miso.chatapplication.chatroom.ChatRoomActivity
-import com.miso.chatapplication.databinding.ListChatroomItemBinding
 import com.miso.chatapplication.databinding.ListTalkItemOthersBinding
-import com.miso.chatapplication.model.ChatRoom
 import com.miso.chatapplication.model.Message
-import com.miso.chatapplication.model.User
 
 class RecyclerMessagesAdapter(val context: Context, val chatRoomKey: String) :
     RecyclerView.Adapter<RecyclerMessagesAdapter.ViewHolder>() {
     var messages: ArrayList<Message> = arrayListOf()
     val myUid = FirebaseAuth.getInstance().currentUser?.uid.toString()
+    val recyclerView = (context as ChatRoomActivity).recycler_talks
 
     init {
-        setupAllUserList()
+        setupMessages()
     }
 
-    fun setupAllUserList() {
-
+    fun setupMessages() {
         FirebaseDatabase.getInstance().getReference("ChatRoom")
             .child("chatRooms").child(chatRoomKey).child("messages")
-            .addListenerForSingleValueEvent(object : ValueEventListener {
+            .addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(error: DatabaseError) {}
                 override fun onDataChange(snapshot: DataSnapshot) {
                     messages.clear()
@@ -41,6 +35,7 @@ class RecyclerMessagesAdapter(val context: Context, val chatRoomKey: String) :
                         messages.add(data.getValue<Message>()!!)
                     }
                     notifyDataSetChanged()
+                    recyclerView.scrollToPosition(messages.size-1)
                 }
             })
 
