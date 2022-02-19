@@ -83,18 +83,22 @@ class RecyclerChatRoomsAdapter(val context: Context) :
             context.startActivity(intent)
             (context as AppCompatActivity).finish()
         }
-
         if (chatRooms[position].messages!!.size > 0) {
-            holder.txt_chatCount.visibility = View.VISIBLE
-            holder.txt_chatCount.text = chatRooms[position].messages!!.size.toString()
             var lastMessage =
                 chatRooms[position].messages!!.values.sortedWith(compareBy({ it.sended_date }))
                     .last()
             holder.txt_message.text = lastMessage.content
             holder.txt_date.text = getLastMessageTimeString(lastMessage.sended_date)
-        } else
-            holder.txt_chatCount.visibility = View.GONE
 
+            var unconfirmedCount =
+                chatRooms[position].messages!!.filter { it.value.confirmed == false && !it.value.senderUid.equals(myUid) }.size
+            if (unconfirmedCount > 0) {
+                holder.txt_chatCount.visibility = View.VISIBLE
+                holder.txt_chatCount.text = unconfirmedCount.toString()
+            } else
+                holder.txt_chatCount.visibility = View.GONE
+
+        }
     }
 
     fun getLastMessageTimeString(lastTimeString: String): String {
@@ -124,14 +128,13 @@ class RecyclerChatRoomsAdapter(val context: Context) :
                 if (dayAgo == 1)
                     return "어제"
                 else
-                    return dayAgo.toString()+"일 전"
+                    return dayAgo.toString() + "일 전"
             } else {
-                if(hourAgo>0)
-                    return hourAgo.toString()+"시간 전"
-                else
-                {
-                    if(minuteAgo>0)
-                        return minuteAgo.toString()+"분 전"
+                if (hourAgo > 0)
+                    return hourAgo.toString() + "시간 전"
+                else {
+                    if (minuteAgo > 0)
+                        return minuteAgo.toString() + "분 전"
                     else
                         return "방금"
                 }

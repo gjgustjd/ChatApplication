@@ -52,6 +52,7 @@
         android:minWidth="40dp"
         android:textColor="@color/white"
         android:textSize="18dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/txt_message"
         app:layout_constraintEnd_toEndOf="@+id/txt_message_date"
         app:layout_constraintTop_toTopOf="@+id/txt_message" />
