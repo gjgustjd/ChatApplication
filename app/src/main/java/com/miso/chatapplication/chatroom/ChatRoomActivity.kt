@@ -24,7 +24,9 @@ import com.miso.chatapplication.model.ChatRoom
 import com.miso.chatapplication.model.Message
 import com.miso.chatapplication.model.User
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 @RequiresApi(Build.VERSION_CODES.O)
 class ChatRoomActivity : AppCompatActivity() {
@@ -73,6 +75,7 @@ class ChatRoomActivity : AppCompatActivity() {
     fun putMessage() {
         var myUid = FirebaseAuth.getInstance().currentUser!!.uid
         var localDateTime = LocalDateTime.now()
+        localDateTime.atZone( TimeZone.getDefault().toZoneId())
         var dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss")
         var dateTimeString = localDateTime.format(dateTimeFormatter).toString()
         var message = Message(myUid, dateTimeString, edt_message.text.toString())

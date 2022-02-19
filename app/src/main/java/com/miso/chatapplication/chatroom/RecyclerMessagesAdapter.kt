@@ -62,14 +62,18 @@ class RecyclerMessagesAdapter(val context: Context, val chatRoomKey: String) :
         if (sendDate.isNotBlank()) {
             timeString = sendDate.substring(8, 12)
             var hour = timeString.substring(0, 2)
-            var minute = timeString.substring(2,4)
+            var minute = timeString.substring(2, 4)
 
-            if (hour.toInt() > 11)
+            var timeformat = "%02d:%02d"
+
+            if (hour.toInt() > 11) {
                 dateText += "오후 "
-            else
+                dateText += timeformat.format(hour.toInt() - 12, minute.toInt())
+            } else {
                 dateText += "오전 "
+                dateText += timeformat.format(hour.toInt(), minute.toInt())
+            }
 
-            dateText += hour + ":" + minute
         }
 
         holder.txtDate.text = dateText
