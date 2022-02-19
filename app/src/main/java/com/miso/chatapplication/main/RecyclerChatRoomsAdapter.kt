@@ -80,6 +80,8 @@ class RecyclerChatRoomsAdapter(val context: Context) :
         {
             holder.txt_chatCount.visibility = View.VISIBLE
             holder.txt_chatCount.text = chatRooms[position].messages!!.size.toString()
+            var lastMessage = chatRooms[position].messages!!.values.sortedWith(compareBy({it.sended_date})).last()
+            holder.txt_message.text = lastMessage.content
         }
         else
            holder.txt_chatCount.visibility = View.GONE

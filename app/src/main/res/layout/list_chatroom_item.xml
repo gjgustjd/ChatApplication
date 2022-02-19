@@ -23,12 +23,17 @@
     <TextView
         android:id="@+id/txt_message"
         style="@style/boldBlack"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="30dp"
+        android:singleLine="true"
         android:text="안녕하세요?첫 번째 메시지입니다."
+        android:textColor="#7E7E7E"
         android:textSize="18dp"
         android:textStyle="normal"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/txt_chat_count"
+        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="@+id/txt_name"
         app:layout_constraintTop_toBottomOf="@+id/txt_name" />
 
