@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -11,10 +12,9 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
-import com.miso.chatapplication.main.MainActivity
 import com.miso.chatapplication.R
+import com.miso.chatapplication.chatroom.ChatRoomActivity
 import com.miso.chatapplication.databinding.ListChatroomItemBinding
-import com.miso.chatapplication.databinding.ListPersonItemBinding
 import com.miso.chatapplication.model.ChatRoom
 import com.miso.chatapplication.model.User
 
@@ -58,10 +58,19 @@ class RecyclerChatRoomsAdapter(val context: Context) :
                 override fun onCancelled(error: DatabaseError) {}
                 override fun onDataChange(snapshot: DataSnapshot) {
                     for (data in snapshot.children) {
+                        holder.opponentUser = data.getValue<User>()!!
                         holder.txt_name.text = data.getValue<User>()!!.name.toString()
                     }
                 }
             })
+        holder.background.setOnClickListener()
+        {
+            var intent = Intent(context,ChatRoomActivity::class.java)
+            intent.putExtra("ChatRoom",chatRooms.get(position))
+            intent.putExtra("Opponent",holder.opponentUser)
+           context.startActivity(intent)
+            (context as AppCompatActivity).finish()
+        }
     }
 
 
@@ -72,6 +81,7 @@ class RecyclerChatRoomsAdapter(val context: Context) :
 
     inner class ViewHolder(itemView: ListChatroomItemBinding) :
         RecyclerView.ViewHolder(itemView.root) {
+        var opponentUser= User("","")
         var background = itemView.background
         var txt_name = itemView.txtName
         var txt_message = itemView.txtMessage

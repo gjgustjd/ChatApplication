@@ -25,7 +25,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initializeView()
-//        getUserList()
         setupRecycler()
     }
 
@@ -45,26 +44,6 @@ class MainActivity : AppCompatActivity() {
         recycler_chatroom.adapter = RecyclerChatRoomsAdapter(this)
 
     }
-
-//    fun getUserList() {
-//        var myUid = FirebaseAuth.getInstance().currentUser!!.uid
-//        firebaseDatabase.orderByChild("users/${myUid}").equalTo(true)
-//            .addListenerForSingleValueEvent(object :
-//                ValueEventListener {
-//                override fun onDataChange(snapshot: DataSnapshot) {
-//                    for (dataSnapshot in snapshot.children)  //나, 상대방 id 가져온다.
-//                    {
-//                        val chatModel: ChatRoom? = dataSnapshot.getValue(ChatRoom::class.java)
-//                        recyclerView.setLayoutManager(LinearLayoutManager(this@MainActivity))
-//                        recyclerView.setAdapter(RecyclerViewAdapter())
-//                    }
-//                }
-//
-//                override fun onCancelled(error: DatabaseError) {}
-//            })
-//
-//    }
-
 
     override fun onBackPressed() {
         super.onBackPressed()
