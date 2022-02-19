@@ -3,6 +3,7 @@ package com.miso.chatapplication.main
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
@@ -75,6 +76,13 @@ class RecyclerChatRoomsAdapter(val context: Context) :
            context.startActivity(intent)
             (context as AppCompatActivity).finish()
         }
+        if(chatRooms[position].messages!!.size>0)
+        {
+            holder.txt_chatCount.visibility = View.VISIBLE
+            holder.txt_chatCount.text = chatRooms[position].messages!!.size.toString()
+        }
+        else
+           holder.txt_chatCount.visibility = View.GONE
     }
 
 
