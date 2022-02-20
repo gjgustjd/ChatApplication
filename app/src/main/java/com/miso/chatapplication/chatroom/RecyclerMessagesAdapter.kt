@@ -17,7 +17,11 @@ import com.miso.chatapplication.databinding.ListTalkItemMineBinding
 import com.miso.chatapplication.databinding.ListTalkItemOthersBinding
 import com.miso.chatapplication.model.Message
 
-class RecyclerMessagesAdapter(val context: Context, val chatRoomKey: String) :
+class RecyclerMessagesAdapter(
+    val context: Context,
+    var chatRoomKey: String?,
+    val opponentUid: String?
+) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var messages: ArrayList<Message> = arrayListOf()
     var messageKeys: ArrayList<String> = arrayListOf()
@@ -29,8 +33,13 @@ class RecyclerMessagesAdapter(val context: Context, val chatRoomKey: String) :
     }
 
     fun setupMessages() {
+        getMessages()
+    }
+
+
+    fun getMessages() {
         FirebaseDatabase.getInstance().getReference("ChatRoom")
-            .child("chatRooms").child(chatRoomKey).child("messages")
+            .child("chatRooms").child(chatRoomKey!!).child("messages")
             .addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(error: DatabaseError) {}
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -43,15 +52,13 @@ class RecyclerMessagesAdapter(val context: Context, val chatRoomKey: String) :
                     recyclerView.scrollToPosition(messages.size - 1)
                 }
             })
-
     }
-
 
     override fun getItemViewType(position: Int): Int {
         return if (messages[position].senderUid.equals(myUid)) 1 else 0
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder{
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             1 -> {
                 val view =
@@ -98,7 +105,7 @@ class RecyclerMessagesAdapter(val context: Context, val chatRoomKey: String) :
 
             txtDate.text = getDateText(sendDate)
 
-            if(message.confirmed.equals(true))
+            if (message.confirmed.equals(true))
                 txtIsShown.visibility = View.GONE
             else
                 txtIsShown.visibility = View.VISIBLE
@@ -106,7 +113,7 @@ class RecyclerMessagesAdapter(val context: Context, val chatRoomKey: String) :
             setShown(position)
         }
 
-        fun getDateText(sendDate:String):String{
+        fun getDateText(sendDate: String): String {
 
             var dateText = ""
             var timeString = ""
@@ -128,13 +135,12 @@ class RecyclerMessagesAdapter(val context: Context, val chatRoomKey: String) :
             return dateText
         }
 
-        fun setShown(position: Int)
-        {
+        fun setShown(position: Int) {
             FirebaseDatabase.getInstance().getReference("ChatRoom")
-                .child("chatRooms").child(chatRoomKey).child("messages")
+                .child("chatRooms").child(chatRoomKey!!).child("messages")
                 .child(messageKeys[position]).child("confirmed").setValue(true)
                 .addOnSuccessListener {
-                    Log.i("checkShown","성공")
+                    Log.i("checkShown", "성공")
                 }
         }
     }
@@ -153,13 +159,13 @@ class RecyclerMessagesAdapter(val context: Context, val chatRoomKey: String) :
 
             txtDate.text = getDateText(sendDate)
 
-            if(message.confirmed.equals(true))
+            if (message.confirmed.equals(true))
                 txtIsShown.visibility = View.GONE
             else
                 txtIsShown.visibility = View.VISIBLE
         }
 
-        fun getDateText(sendDate:String):String{
+        fun getDateText(sendDate: String): String {
             var dateText = ""
             var timeString = ""
             if (sendDate.isNotBlank()) {

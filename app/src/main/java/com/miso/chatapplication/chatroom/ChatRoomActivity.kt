@@ -4,8 +4,6 @@ import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
@@ -15,16 +13,13 @@ import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.miso.chatapplication.addChatRoom.RecyclerUsersAdapter
+import com.google.firebase.database.*
 import com.miso.chatapplication.main.MainActivity
 import com.miso.chatapplication.databinding.ActivityChatroomBinding
 import com.miso.chatapplication.model.ChatRoom
 import com.miso.chatapplication.model.Message
 import com.miso.chatapplication.model.User
 import java.time.LocalDateTime
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -46,14 +41,15 @@ class ChatRoomActivity : AppCompatActivity() {
         binding = ActivityChatroomBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initializeView()
-        setupRecycler()
     }
 
     fun initializeView() {
         chatRoom = (intent.getSerializableExtra("ChatRoom")) as ChatRoom
         chatRoomKey = intent.getStringExtra("ChatRoomKey")!!
         opponentUser = (intent.getSerializableExtra("Opponent")) as User
+
         Log.i("opponentUser", opponentUser.name.toString())
+        Log.i("opponentUser", opponentUser.uid.toString())
         var myUid = FirebaseAuth.getInstance().currentUser?.uid
         firebaseDatabase = FirebaseDatabase.getInstance().reference!!
         btn_exit = binding.imgbtnQuit
@@ -70,8 +66,27 @@ class ChatRoomActivity : AppCompatActivity() {
         {
             putMessage()
         }
+
+        if(chatRoomKey.isNullOrBlank())
+            setupChatRoomKey()
+        else
+            setupRecycler()
     }
 
+    fun setupChatRoomKey() {
+        FirebaseDatabase.getInstance().getReference("ChatRoom")
+            .child("chatRooms").orderByChild("users/${opponentUser.uid}").equalTo(true)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {}
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    for (data in snapshot.children) {
+                        chatRoomKey = data.key!!
+                        setupRecycler()
+                        break
+                    }
+                }
+            })
+    }
     fun putMessage() {
         var myUid = FirebaseAuth.getInstance().currentUser!!.uid
         var localDateTime = LocalDateTime.now()
@@ -79,6 +94,7 @@ class ChatRoomActivity : AppCompatActivity() {
         var dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss")
         var dateTimeString = localDateTime.format(dateTimeFormatter).toString()
         var message = Message(myUid, dateTimeString, edt_message.text.toString())
+        Log.i("ChatRoomKey",chatRoomKey)
         FirebaseDatabase.getInstance().getReference("ChatRoom").
         child("chatRooms").child(chatRoomKey).child("messages")
             .push().setValue(message).addOnSuccessListener {
@@ -89,6 +105,6 @@ class ChatRoomActivity : AppCompatActivity() {
 
     fun setupRecycler() {
         recycler_talks.layoutManager = LinearLayoutManager(this)
-        recycler_talks.adapter = RecyclerMessagesAdapter(this,chatRoomKey)
+        recycler_talks.adapter = RecyclerMessagesAdapter(this,chatRoomKey,opponentUser.uid)
     }
 }

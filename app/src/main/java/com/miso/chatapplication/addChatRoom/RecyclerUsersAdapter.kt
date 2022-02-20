@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -13,6 +14,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
 import com.miso.chatapplication.main.MainActivity
 import com.miso.chatapplication.R
+import com.miso.chatapplication.chatroom.ChatRoomActivity
 import com.miso.chatapplication.databinding.ListPersonItemBinding
 import com.miso.chatapplication.model.ChatRoom
 import com.miso.chatapplication.model.User
@@ -77,27 +79,38 @@ class RecyclerUsersAdapter(val context: Context) :
     }
 
     fun addChatRoom(position: Int) {
+        val opponent = users[position]
         var database = FirebaseDatabase.getInstance().getReference("ChatRoom")
         var chatRoom = ChatRoom(
-            mapOf(currnentUser.uid!! to true, users[position].uid!! to true),
+            mapOf(currnentUser.uid!! to true, opponent.uid!! to true),
             null
         )
         var myUid = FirebaseAuth.getInstance().uid
         database.child("chatRooms")
-            .orderByChild("users/$myUid").equalTo(true)
+            .orderByChild("users/${opponent.uid}").equalTo(true)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onCancelled(error: DatabaseError) {}
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot == null) {
+                    if (snapshot.value == null) {
                         database.child("chatRooms").push().setValue(chatRoom).addOnSuccessListener {
-                            context.startActivity(Intent(context, MainActivity::class.java))
+                            goToChatRoom(chatRoom, opponent)
                         }
-                    } else
+                    } else {
                         context.startActivity(Intent(context, MainActivity::class.java))
+                        goToChatRoom(chatRoom, opponent)
+                    }
+
                 }
             })
+    }
 
-
+    fun goToChatRoom(chatRoom: ChatRoom, opponentUid: User) {
+        var intent = Intent(context, ChatRoomActivity::class.java)
+        intent.putExtra("ChatRoom", chatRoom)
+        intent.putExtra("Opponent", opponentUid)
+        intent.putExtra("ChatRoomKey", "")
+        context.startActivity(intent)
+        (context as AppCompatActivity).finish()
     }
 
     override fun getItemCount(): Int {
