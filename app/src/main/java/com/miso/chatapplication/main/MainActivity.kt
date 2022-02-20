@@ -20,6 +20,7 @@ import com.miso.chatapplication.model.ChatRoom
 @RequiresApi(Build.VERSION_CODES.O)
 class MainActivity : AppCompatActivity() {
     lateinit var btnAddchatRoom: Button
+    lateinit var btnSignout: Button
     lateinit var binding: ActivityMainBinding
     lateinit var firebaseDatabase: DatabaseReference
     lateinit var recycler_chatroom: RecyclerView
@@ -34,6 +35,11 @@ class MainActivity : AppCompatActivity() {
 
     fun initializeView() {
         firebaseDatabase = FirebaseDatabase.getInstance().getReference("ChatRoom")!!
+        btnSignout = binding.btnSignout
+        btnSignout.setOnClickListener()
+        {
+            signOut()
+        }
         btnAddchatRoom = binding.btnNewMessage
         btnAddchatRoom.setOnClickListener()
         {
@@ -49,7 +55,8 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    override fun onBackPressed() {
+    fun signOut()
+    {
         val builder = AlertDialog.Builder(this)
             .setTitle("로그아웃")
             .setMessage("로그아웃 하시겠습니까?")
@@ -65,5 +72,9 @@ class MainActivity : AppCompatActivity() {
                     dialog.dismiss()
                 })
         builder.show()
+    }
+
+    override fun onBackPressed() {
+        signOut()
     }
 }
