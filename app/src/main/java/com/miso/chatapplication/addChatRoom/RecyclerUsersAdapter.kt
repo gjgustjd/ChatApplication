@@ -82,9 +82,20 @@ class RecyclerUsersAdapter(val context: Context) :
             mapOf(currnentUser.uid!! to true, users[position].uid!! to true),
             null
         )
-        database.child("chatRooms").push().setValue(chatRoom).addOnSuccessListener {
-            context.startActivity(Intent(context, MainActivity::class.java))
-        }
+        var myUid = FirebaseAuth.getInstance().uid
+        database.child("chatRooms")
+            .orderByChild("users/$myUid").equalTo(true)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {}
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot == null) {
+                        database.child("chatRooms").push().setValue(chatRoom).addOnSuccessListener {
+                            context.startActivity(Intent(context, MainActivity::class.java))
+                        }
+                    } else
+                        context.startActivity(Intent(context, MainActivity::class.java))
+                }
+            })
 
 
     }
