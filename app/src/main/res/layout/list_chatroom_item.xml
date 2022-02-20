@@ -2,19 +2,18 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/background"
     android:layout_width="match_parent"
     android:layout_height="100dp"
     android:layout_marginBottom="10dp"
     android:padding="0dp">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/txt_name"
         style="@style/boldBlack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginLeft="20dp"
-        android:text="성명"
         android:textSize="18dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -22,22 +21,24 @@
     <TextView
         android:id="@+id/txt_message"
         style="@style/boldBlack"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="안녕하세요?첫 번째 메시지입니다."
+        android:layout_marginEnd="30dp"
+        android:singleLine="true"
+        android:textColor="#7E7E7E"
         android:textSize="18dp"
         android:textStyle="normal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/textView"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintEnd_toStartOf="@+id/txt_chat_count"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="@+id/txt_name"
+        app:layout_constraintTop_toBottomOf="@+id/txt_name" />
 
     <TextView
         android:id="@+id/txt_message_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
-        android:layout_marginRight="20dp"
-        android:text="어제"
         android:textSize="18dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -49,9 +50,9 @@
         android:background="@drawable/background_alarm_talk"
         android:gravity="center"
         android:minWidth="40dp"
-        android:text="84"
         android:textColor="@color/white"
         android:textSize="18dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/txt_message"
         app:layout_constraintEnd_toEndOf="@+id/txt_message_date"
         app:layout_constraintTop_toTopOf="@+id/txt_message" />

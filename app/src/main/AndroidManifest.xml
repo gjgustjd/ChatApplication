@@ -13,10 +13,14 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity">
+        <activity android:name=".main.MainActivity">
+        </activity>
+        <activity android:name=".chatroom.ChatRoomActivity">
+        </activity>
+        <activity android:name=".addChatRoom.AddChatRoomActivity">
         </activity>
         <activity android:name=".SignUpActivity">
         </activity>
