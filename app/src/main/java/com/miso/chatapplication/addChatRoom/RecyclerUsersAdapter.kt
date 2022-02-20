@@ -21,17 +21,17 @@ import com.miso.chatapplication.model.User
 
 class RecyclerUsersAdapter(val context: Context) :
     RecyclerView.Adapter<RecyclerUsersAdapter.ViewHolder>() {
-    var users: ArrayList<User> = arrayListOf()
-    val allUsers: ArrayList<User> = arrayListOf()
+    var users: ArrayList<User> = arrayListOf()        //검색어로 일치한 사용자 목록
+    val allUsers: ArrayList<User> = arrayListOf()    //전체 사용자 목록
     lateinit var currnentUser: User
 
     init {
         setupAllUserList()
     }
 
-    fun setupAllUserList() {
-        val myUid = FirebaseAuth.getInstance().currentUser?.uid.toString()
-        FirebaseDatabase.getInstance().getReference("User").child("users")
+    fun setupAllUserList() {        //전체 사용자 목록 불러오기
+        val myUid = FirebaseAuth.getInstance().currentUser?.uid.toString()        //현재 사용자 아이디
+        FirebaseDatabase.getInstance().getReference("User").child("users")   //사용자 데이터 요청
             .addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(error: DatabaseError) {
                 }
@@ -41,26 +41,26 @@ class RecyclerUsersAdapter(val context: Context) :
                     for (data in snapshot.children) {
                         val item = data.getValue<User>()
                         if (item?.uid.equals(myUid)) {
-                            currnentUser = item!!
+                            currnentUser = item!!             //전체 사용자 목록에서 현재 사용자는 제외
                             continue
                         }
-                        allUsers.add(item!!)
+                        allUsers.add(item!!)              //전체 사용자 목록에 추가
                     }
                     users = allUsers.clone() as ArrayList<User>
-                    notifyDataSetChanged()
+                    notifyDataSetChanged()              //화면 업데이트
                 }
             })
     }
 
-    fun searchItem(target: String) {
-        if (target.equals("")) {
+    fun searchItem(target: String) {            //검색
+        if (target.equals("")) {      //검색어 없는 경우 전체 목록 표시
             users = allUsers.clone() as ArrayList<User>
         } else {
-            var matchedList = allUsers.filter { it.name!!.contains(target) }
+            var matchedList = allUsers.filter { it.name!!.contains(target) }         //검색어 포함된 항목 불러오기
             users.clear()
             matchedList.forEach { users.add(it) }
         }
-        notifyDataSetChanged()
+        notifyDataSetChanged()          //화면 업데이트
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -74,41 +74,41 @@ class RecyclerUsersAdapter(val context: Context) :
 
         holder.background.setOnClickListener()
         {
-            addChatRoom(position)
+            addChatRoom(position)        //해당 사용자 선택 시
         }
     }
 
-    fun addChatRoom(position: Int) {
-        val opponent = users[position]
-        var database = FirebaseDatabase.getInstance().getReference("ChatRoom")
-        var chatRoom = ChatRoom(
+    fun addChatRoom(position: Int) {     //채팅방 추가
+        val opponent = users[position]   //채팅할 상대방 정보
+        var database = FirebaseDatabase.getInstance().getReference("ChatRoom")    //넣을 database reference 세팅
+        var chatRoom = ChatRoom(         //추가할 채팅방 정보 세팅
             mapOf(currnentUser.uid!! to true, opponent.uid!! to true),
             null
         )
-        var myUid = FirebaseAuth.getInstance().uid
+        var myUid = FirebaseAuth.getInstance().uid       //내 Uid
         database.child("chatRooms")
-            .orderByChild("users/${opponent.uid}").equalTo(true)
+            .orderByChild("users/${opponent.uid}").equalTo(true)       //상대방 Uid가 포함된 채팅방이 있는 지 확인
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onCancelled(error: DatabaseError) {}
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.value == null) {
-                        database.child("chatRooms").push().setValue(chatRoom).addOnSuccessListener {
+                    if (snapshot.value == null) {              //채팅방이 없는 경우
+                        database.child("chatRooms").push().setValue(chatRoom).addOnSuccessListener {  // 채팅방 새로 생성 후 이동
                             goToChatRoom(chatRoom, opponent)
                         }
                     } else {
                         context.startActivity(Intent(context, MainActivity::class.java))
-                        goToChatRoom(chatRoom, opponent)
+                        goToChatRoom(chatRoom, opponent)                    //해당 채팅방으로 이동
                     }
 
                 }
             })
     }
 
-    fun goToChatRoom(chatRoom: ChatRoom, opponentUid: User) {
+    fun goToChatRoom(chatRoom: ChatRoom, opponentUid: User) {       //채팅방으로 이동
         var intent = Intent(context, ChatRoomActivity::class.java)
-        intent.putExtra("ChatRoom", chatRoom)
-        intent.putExtra("Opponent", opponentUid)
-        intent.putExtra("ChatRoomKey", "")
+        intent.putExtra("ChatRoom", chatRoom)       //채팅방 정보
+        intent.putExtra("Opponent", opponentUid)    //상대방 정보
+        intent.putExtra("ChatRoomKey", "")   //채팅방 키
         context.startActivity(intent)
         (context as AppCompatActivity).finish()
     }
