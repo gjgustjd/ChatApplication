@@ -31,7 +31,7 @@ class SignUpActivity : AppCompatActivity() {
         initializeListener()
     }
 
-    fun initializeView() {
+    fun initializeView() {  //뷰 초기화
         auth = FirebaseAuth.getInstance()
         btn_signUp = binding.btnSignup
         edt_email = binding.edtEmail
@@ -39,27 +39,27 @@ class SignUpActivity : AppCompatActivity() {
         edt_name = binding.edtOpponentName
     }
 
-    fun initializeListener() {
+    fun initializeListener() {   //버튼 클릭 시 리스너 초기화
         btn_signUp.setOnClickListener()
         {
             signUp()
         }
     }
 
-    fun signUp() {
-        var email = edt_email.text.toString()
+    fun signUp() {     //회원 가입 실행
+        var email = edt_email.text.toString()           //각 입력란 값 String으로 변환
         var password = edt_password.text.toString()
         var name = edt_name.text.toString()
 
-        auth.createUserWithEmailAndPassword(email, password)
+        auth.createUserWithEmailAndPassword(email, password)      //FirebaseAuth에 회원가입 성공 시
             .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
+                if (task.isSuccessful) {     //회원 가입 성공 시
                     try {
                         val user = auth.currentUser
                         val userId = user?.uid
                         val userIdSt = userId.toString()
                         FirebaseDatabase.getInstance().getReference("User").child("users")
-                            .child(userId.toString()).setValue(User(name, userIdSt, email))
+                            .child(userId.toString()).setValue(User(name, userIdSt, email))             //Firebase RealtimeDatabase에 User 정보 ㅊ추가
                         Toast.makeText(this, "회원가입이 완료되었습니다.", Toast.LENGTH_SHORT).show()
                         Log.e("UserId", "$userId")
                         startActivity(Intent(this@SignUpActivity, MainActivity::class.java))
