@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         setupRecycler()
     }
 
-    fun initializeView() {
+    fun initializeView() { //뷰 초기화
         try {
             firebaseDatabase = FirebaseDatabase.getInstance().getReference("ChatRoom")!!
             btnSignout = binding.btnSignout
@@ -47,13 +47,13 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this,"화면 초기화 중 오류가 발생하였습니다.",Toast.LENGTH_LONG).show()
         }
     }
-    fun initializeListener()
+    fun initializeListener()  //버튼 클릭 시 리스너 초기화
     {
         btnSignout.setOnClickListener()
         {
             signOut()
         }
-        btnAddchatRoom.setOnClickListener()
+        btnAddchatRoom.setOnClickListener()  //새 메시지 화면으로 이동
         {
             startActivity(Intent(this@MainActivity, AddChatRoomActivity::class.java))
             finish()
@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity() {
         recycler_chatroom.adapter = RecyclerChatRoomsAdapter(this)
     }
 
-    fun signOut()
+    fun signOut()    //로그아웃 실행
     {
         try {
             val builder = AlertDialog.Builder(this)
@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity() {
                 .setPositiveButton("확인"
                 ) { dialog, id ->
                     try {
-                        FirebaseAuth.getInstance().signOut()
+                        FirebaseAuth.getInstance().signOut()             //로그아웃
                         startActivity(Intent(this@MainActivity, LoginActivity::class.java))
                         dialog.dismiss()
                         finish()
@@ -84,7 +84,7 @@ class MainActivity : AppCompatActivity() {
                         Toast.makeText(this, "로그아웃 중 오류가 발생하였습니다.", Toast.LENGTH_LONG).show()
                     }
                 }
-                .setNegativeButton("취소"
+                .setNegativeButton("취소"          //다이얼로그 닫기
                 ) { dialog, id ->
                     dialog.dismiss()
                 }
