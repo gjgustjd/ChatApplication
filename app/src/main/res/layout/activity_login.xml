@@ -47,43 +47,30 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/edt_email" />
 
-        <com.google.android.gms.common.SignInButton
-            android:id="@+id/btn_login_google"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="로그인"
-            app:backgroundTint="#3660DC"
-            app:layout_constraintBottom_toTopOf="@id/btn_sign_in"
-            app:layout_constraintEnd_toEndOf="@+id/edt_password"
-            app:layout_constraintStart_toStartOf="@+id/edt_password"
-            app:layout_constraintTop_toBottomOf="@id/edt_password" />
-
         <Button
             android:id="@+id/btn_signup"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:text="회원가입"
             android:textColor="@color/white"
             app:backgroundTint="#3660DC"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/edt_password"
             app:layout_constraintStart_toStartOf="@+id/edt_password"
-            app:layout_constraintTop_toBottomOf="@+id/btn_login_google" />
+            app:layout_constraintTop_toBottomOf="@id/btn_sign_in" />
 
         <Button
             android:id="@+id/btn_sign_in"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:text="로그인"
             android:textColor="@color/white"
             app:backgroundTint="#3660DC"
             app:layout_constraintBottom_toTopOf="@id/btn_signup"
             app:layout_constraintEnd_toEndOf="@+id/edt_password"
             app:layout_constraintStart_toStartOf="@+id/edt_password"
-            app:layout_constraintTop_toBottomOf="@id/btn_login_google" />
+            app:layout_constraintTop_toBottomOf="@id/edt_password" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
