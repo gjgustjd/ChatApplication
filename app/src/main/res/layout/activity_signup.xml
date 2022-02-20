@@ -24,6 +24,7 @@
             android:ems="10"
             android:hint="이름"
             android:inputType="textPersonName"
+            android:textColor="@color/black"
             android:textColorHint="#B8B8B8"
             app:layout_constraintBottom_toTopOf="@id/edt_email"
             app:layout_constraintEnd_toEndOf="parent"
@@ -39,6 +40,7 @@
             android:ems="10"
             android:hint="Email"
             android:inputType="textPersonName"
+            android:textColor="@color/black"
             android:textColorHint="#B8B8B8"
             app:layout_constraintBottom_toTopOf="@id/edt_password"
             app:layout_constraintEnd_toEndOf="parent"
@@ -53,6 +55,7 @@
             android:ems="10"
             android:hint="비밀번호"
             android:inputType="textPersonName|textPassword"
+            android:textColor="@color/black"
             android:textColorHint="#B8B8B8"
             app:layout_constraintBottom_toTopOf="@+id/btn_signup"
             app:layout_constraintEnd_toEndOf="parent"
@@ -69,7 +72,8 @@
             app:backgroundTint="#3660DC"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/edt_password"
-            app:layout_constraintStart_toStartOf="@+id/edt_password" />
+            app:layout_constraintStart_toStartOf="@+id/edt_password"
+            app:layout_constraintTop_toBottomOf="@id/edt_password" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView

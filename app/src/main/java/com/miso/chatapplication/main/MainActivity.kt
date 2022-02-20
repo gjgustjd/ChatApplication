@@ -1,8 +1,12 @@
 package com.miso.chatapplication.main
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.widget.Button
+import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,8 +18,10 @@ import com.miso.chatapplication.databinding.ActivityMainBinding
 import com.miso.chatapplication.model.ChatRoom
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 class MainActivity : AppCompatActivity() {
     lateinit var btnAddchatRoom: Button
+    lateinit var btnSignout: Button
     lateinit var binding: ActivityMainBinding
     lateinit var firebaseDatabase: DatabaseReference
     lateinit var recycler_chatroom: RecyclerView
@@ -25,29 +31,72 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initializeView()
+        initializeListener()
         setupRecycler()
     }
 
     fun initializeView() {
-        firebaseDatabase = FirebaseDatabase.getInstance().getReference("ChatRoom")!!
-        btnAddchatRoom = binding.btnNewMessage
+        try {
+            firebaseDatabase = FirebaseDatabase.getInstance().getReference("ChatRoom")!!
+            btnSignout = binding.btnSignout
+            btnAddchatRoom = binding.btnNewMessage
+            recycler_chatroom = binding.recyclerChatrooms
+        }catch (e:Exception)
+        {
+            e.printStackTrace()
+            Toast.makeText(this,"화면 초기화 중 오류가 발생하였습니다.",Toast.LENGTH_LONG).show()
+        }
+    }
+    fun initializeListener()
+    {
+        btnSignout.setOnClickListener()
+        {
+            signOut()
+        }
         btnAddchatRoom.setOnClickListener()
         {
             startActivity(Intent(this@MainActivity, AddChatRoomActivity::class.java))
             finish()
         }
-        recycler_chatroom = binding.recyclerChatrooms
     }
-    fun setupRecycler()
-    {
+
+    fun setupRecycler() {
         recycler_chatroom.layoutManager = LinearLayoutManager(this)
         recycler_chatroom.adapter = RecyclerChatRoomsAdapter(this)
+    }
 
+    fun signOut()
+    {
+        try {
+            val builder = AlertDialog.Builder(this)
+                .setTitle("로그아웃")
+                .setMessage("로그아웃 하시겠습니까?")
+                .setPositiveButton("확인"
+                ) { dialog, id ->
+                    try {
+                        FirebaseAuth.getInstance().signOut()
+                        startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                        dialog.dismiss()
+                        finish()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        dialog.dismiss()
+                        Toast.makeText(this, "로그아웃 중 오류가 발생하였습니다.", Toast.LENGTH_LONG).show()
+                    }
+                }
+                .setNegativeButton("취소"
+                ) { dialog, id ->
+                    dialog.dismiss()
+                }
+            builder.show()
+        }catch (e:Exception)
+        {
+            e.printStackTrace()
+            Toast.makeText(this,"로그아웃 중 오류가 발생하였습니다.",Toast.LENGTH_LONG).show()
+        }
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
-        startActivity(Intent(this@MainActivity, LoginActivity::class.java))
-        finish()
+        signOut()
     }
 }

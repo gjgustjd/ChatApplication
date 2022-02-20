@@ -26,6 +26,7 @@ class AddChatRoomActivity : AppCompatActivity() {
         binding = ActivityAddChatroomBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initializeView()
+        initializeListener()
         setupRecycler()
     }
 
@@ -33,12 +34,16 @@ class AddChatRoomActivity : AppCompatActivity() {
     {
         firebaseDatabase = FirebaseDatabase.getInstance().reference!!
         btn_exit = binding.imgbtnBack
+        edt_opponent = binding.edtOpponentName
+        recycler_people = binding.recyclerPeoples
+    }
+    fun initializeListener()
+    {
         btn_exit.setOnClickListener()
         {
             startActivity(Intent(this@AddChatRoomActivity, MainActivity::class.java))
         }
-        edt_opponent = binding.edtOpponentName
-        recycler_people = binding.recyclerPeoples
+
         edt_opponent.addTextChangedListener(object :TextWatcher
         {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -51,9 +56,7 @@ class AddChatRoomActivity : AppCompatActivity() {
                 var adapter = recycler_people?.adapter as RecyclerUsersAdapter
                 adapter.searchItem(s.toString())
             }
-
         })
-
     }
     fun setupRecycler()
     {

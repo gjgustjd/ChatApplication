@@ -15,8 +15,8 @@
         android:layout_marginTop="30dp"
         android:text="메시지"
         android:textSize="18dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btn_new_message"
+        app:layout_constraintStart_toEndOf="@+id/btn_signout"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
@@ -32,6 +32,19 @@
         android:textStyle="normal"
         app:layout_constraintBottom_toBottomOf="@+id/txt_TItle"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/txt_TItle" />
+
+    <Button
+        android:id="@+id/btn_signout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:text="로그아웃"
+        android:textColor="#8D8D8E"
+        android:textSize="18dp"
+        android:textStyle="normal"
+        app:layout_constraintBottom_toBottomOf="@+id/txt_TItle"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/txt_TItle" />
 
     <androidx.recyclerview.widget.RecyclerView
