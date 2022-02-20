@@ -30,21 +30,21 @@ class AddChatRoomActivity : AppCompatActivity() {
         setupRecycler()
     }
 
-    fun initializeView()
+    fun initializeView()   //뷰 초기화
     {
         firebaseDatabase = FirebaseDatabase.getInstance().reference!!
         btn_exit = binding.imgbtnBack
         edt_opponent = binding.edtOpponentName
         recycler_people = binding.recyclerPeoples
     }
-    fun initializeListener()
+    fun initializeListener()   //버튼 클릭 시 리스너 초기화
     {
         btn_exit.setOnClickListener()
         {
             startActivity(Intent(this@AddChatRoomActivity, MainActivity::class.java))
         }
 
-        edt_opponent.addTextChangedListener(object :TextWatcher
+        edt_opponent.addTextChangedListener(object :TextWatcher                  //검색 창에 입력된 글자가 변경될 때마다 검색 내용 업데이트
         {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
@@ -54,11 +54,11 @@ class AddChatRoomActivity : AppCompatActivity() {
 
             override fun afterTextChanged(s: Editable?) {
                 var adapter = recycler_people?.adapter as RecyclerUsersAdapter
-                adapter.searchItem(s.toString())
+                adapter.searchItem(s.toString())                  //입력된 검색어로 검색 진행 및 업데이트
             }
         })
     }
-    fun setupRecycler()
+    fun setupRecycler()   //사용자 목록 초기화 및 업데이트
     {
        recycler_people.layoutManager = LinearLayoutManager(this)
         recycler_people.adapter = RecyclerUsersAdapter(this)
