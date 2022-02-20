@@ -6,6 +6,7 @@ import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
@@ -20,6 +21,7 @@ import com.miso.chatapplication.chatroom.ChatRoomActivity
 import com.miso.chatapplication.databinding.ListChatroomItemBinding
 import com.miso.chatapplication.model.ChatRoom
 import com.miso.chatapplication.model.User
+import java.lang.Exception
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -37,7 +39,6 @@ class RecyclerChatRoomsAdapter(val context: Context) :
     }
 
     fun setupAllUserList() {
-
         FirebaseDatabase.getInstance().getReference("ChatRoom").child("chatRooms")
             .orderByChild("users/$myUid").equalTo(true)
             .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -76,69 +77,100 @@ class RecyclerChatRoomsAdapter(val context: Context) :
             })
         holder.background.setOnClickListener()
         {
-            var intent = Intent(context, ChatRoomActivity::class.java)
-            intent.putExtra("ChatRoom", chatRooms.get(position))
-            intent.putExtra("Opponent", holder.opponentUser)
-            intent.putExtra("ChatRoomKey", chatRoomKeys[position])
-            context.startActivity(intent)
-            (context as AppCompatActivity).finish()
+            try {
+                var intent = Intent(context, ChatRoomActivity::class.java)
+                intent.putExtra("ChatRoom", chatRooms.get(position))
+                intent.putExtra("Opponent", holder.opponentUser)
+                intent.putExtra("ChatRoomKey", chatRoomKeys[position])
+                context.startActivity(intent)
+                (context as AppCompatActivity).finish()
+            }catch (e:Exception)
+            {
+                e.printStackTrace()
+                Toast.makeText(context,"채팅방 이동 중 문제가 발생하였습니다.",Toast.LENGTH_SHORT).show()
+            }
         }
+
         if (chatRooms[position].messages!!.size > 0) {
+            setupLastMessageAndDate(holder, position)
+            setupMessageCount(holder, position)
+        }
+    }
+
+    fun setupLastMessageAndDate(holder: ViewHolder, position: Int) {
+        try {
             var lastMessage =
                 chatRooms[position].messages!!.values.sortedWith(compareBy({ it.sended_date }))
                     .last()
             holder.txt_message.text = lastMessage.content
             holder.txt_date.text = getLastMessageTimeString(lastMessage.sended_date)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 
+    fun setupMessageCount(holder: ViewHolder, position: Int) {
+        try {
             var unconfirmedCount =
-                chatRooms[position].messages!!.filter { it.value.confirmed == false && !it.value.senderUid.equals(myUid) }.size
+                chatRooms[position].messages!!.filter {
+                    !it.value.confirmed && !it.value.senderUid.equals(
+                        myUid
+                    )
+                }.size
             if (unconfirmedCount > 0) {
                 holder.txt_chatCount.visibility = View.VISIBLE
                 holder.txt_chatCount.text = unconfirmedCount.toString()
             } else
                 holder.txt_chatCount.visibility = View.GONE
-
+        } catch (e: Exception) {
+            e.printStackTrace()
+            holder.txt_chatCount.visibility = View.GONE
         }
     }
 
     fun getLastMessageTimeString(lastTimeString: String): String {
-        var currentTime = LocalDateTime.now().atZone(TimeZone.getDefault().toZoneId())
-        var dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss")
+        try {
+            var currentTime = LocalDateTime.now().atZone(TimeZone.getDefault().toZoneId())
+            var dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss")
 
-        var messageMonth = lastTimeString.substring(4, 6).toInt()
-        var messageDate = lastTimeString.substring(6, 8).toInt()
-        var messageHour = lastTimeString.substring(8, 10).toInt()
-        var messageMinute = lastTimeString.substring(10, 12).toInt()
+            var messageMonth = lastTimeString.substring(4, 6).toInt()
+            var messageDate = lastTimeString.substring(6, 8).toInt()
+            var messageHour = lastTimeString.substring(8, 10).toInt()
+            var messageMinute = lastTimeString.substring(10, 12).toInt()
 
-        var formattedCurrentTimeString = currentTime.format(dateTimeFormatter)
-        var currentMonth = formattedCurrentTimeString.substring(4, 6).toInt()
-        var currentDate = formattedCurrentTimeString.substring(6, 8).toInt()
-        var currentHour = formattedCurrentTimeString.substring(8, 10).toInt()
-        var currentMinute = formattedCurrentTimeString.substring(10, 12).toInt()
+            var formattedCurrentTimeString = currentTime.format(dateTimeFormatter)
+            var currentMonth = formattedCurrentTimeString.substring(4, 6).toInt()
+            var currentDate = formattedCurrentTimeString.substring(6, 8).toInt()
+            var currentHour = formattedCurrentTimeString.substring(8, 10).toInt()
+            var currentMinute = formattedCurrentTimeString.substring(10, 12).toInt()
 
-        var monthAgo = currentMonth - messageMonth
-        var dayAgo = currentDate - messageDate
-        var hourAgo = currentHour - messageHour
-        var minuteAgo = currentMinute - messageMinute
+            var monthAgo = currentMonth - messageMonth
+            var dayAgo = currentDate - messageDate
+            var hourAgo = currentHour - messageHour
+            var minuteAgo = currentMinute - messageMinute
 
-        if (monthAgo > 0)
-            return monthAgo.toString() + "개월 전"
-        else {
-            if (dayAgo > 0) {
-                if (dayAgo == 1)
-                    return "어제"
-                else
-                    return dayAgo.toString() + "일 전"
-            } else {
-                if (hourAgo > 0)
-                    return hourAgo.toString() + "시간 전"
-                else {
-                    if (minuteAgo > 0)
-                        return minuteAgo.toString() + "분 전"
+            if (monthAgo > 0)
+                return monthAgo.toString() + "개월 전"
+            else {
+                if (dayAgo > 0) {
+                    if (dayAgo == 1)
+                        return "어제"
                     else
-                        return "방금"
+                        return dayAgo.toString() + "일 전"
+                } else {
+                    if (hourAgo > 0)
+                        return hourAgo.toString() + "시간 전"
+                    else {
+                        if (minuteAgo > 0)
+                            return minuteAgo.toString() + "분 전"
+                        else
+                            return "방금"
+                    }
                 }
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return ""
         }
     }
 
