@@ -49,16 +49,16 @@ class ChatRoomActivity : AppCompatActivity() {
         setupChatRooms()
     }
 
-    fun initializeProperty() {
-        myUid = FirebaseAuth.getInstance().currentUser?.uid!!
+    fun initializeProperty() {  //변수 초기화
+        myUid = FirebaseAuth.getInstance().currentUser?.uid!!              //현재 로그인한 유저 id
         firebaseDatabase = FirebaseDatabase.getInstance().reference!!
 
-        chatRoom = (intent.getSerializableExtra("ChatRoom")) as ChatRoom
-        chatRoomKey = intent.getStringExtra("ChatRoomKey")!!
-        opponentUser = (intent.getSerializableExtra("Opponent")) as User
+        chatRoom = (intent.getSerializableExtra("ChatRoom")) as ChatRoom      //채팅방 정보
+        chatRoomKey = intent.getStringExtra("ChatRoomKey")!!            //채팅방 키
+        opponentUser = (intent.getSerializableExtra("Opponent")) as User    //상대방 유저 정보
     }
 
-    fun initializeView() {
+    fun initializeView() {    //뷰 초기화
         btn_exit = binding.imgbtnQuit
         edt_message = binding.edtMessage
         recycler_talks = binding.recyclerMessages
@@ -67,7 +67,7 @@ class ChatRoomActivity : AppCompatActivity() {
         txt_title.text = opponentUser!!.name ?: ""
     }
 
-    fun initializeListener() {
+    fun initializeListener() {   //버튼 클릭 시 리스너 초기화
         btn_exit.setOnClickListener()
         {
             startActivity(Intent(this@ChatRoomActivity, MainActivity::class.java))
@@ -78,34 +78,34 @@ class ChatRoomActivity : AppCompatActivity() {
         }
     }
 
-    fun setupChatRooms() {
+    fun setupChatRooms() {              //채팅방 목록 초기화 및 표시
         if (chatRoomKey.isNullOrBlank())
             setupChatRoomKey()
         else
             setupRecycler()
     }
 
-    fun setupChatRoomKey() {
+    fun setupChatRoomKey() {            //chatRoomKey 없을 경우 초기화 후 목록 초기화
         FirebaseDatabase.getInstance().getReference("ChatRoom")
-            .child("chatRooms").orderByChild("users/${opponentUser.uid}").equalTo(true)
+            .child("chatRooms").orderByChild("users/${opponentUser.uid}").equalTo(true)    //상대방의 Uid가 포함된 목록이 있는지 확인
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onCancelled(error: DatabaseError) {}
                 override fun onDataChange(snapshot: DataSnapshot) {
                     for (data in snapshot.children) {
-                        chatRoomKey = data.key!!
-                        setupRecycler()
+                        chatRoomKey = data.key!!          //chatRoomKey 초기화
+                        setupRecycler()                  //목록 업데이트
                         break
                     }
                 }
             })
     }
 
-    fun putMessage() {
+    fun putMessage() {       //메시지 전송
         try {
-            var message = Message(myUid, getDateTimeString(), edt_message.text.toString())
+            var message = Message(myUid, getDateTimeString(), edt_message.text.toString())    //메시지 정보 초기화
             Log.i("ChatRoomKey", chatRoomKey)
             FirebaseDatabase.getInstance().getReference("ChatRoom").child("chatRooms")
-                .child(chatRoomKey).child("messages")
+                .child(chatRoomKey).child("messages")                   //현재 채팅방에 메시지 추가
                 .push().setValue(message).addOnSuccessListener {
                     Log.i("putMessage", "메시지 전송에 성공하였습니다.")
                     edt_message.text.clear()
@@ -118,7 +118,7 @@ class ChatRoomActivity : AppCompatActivity() {
         }
     }
 
-    fun getDateTimeString(): String {
+    fun getDateTimeString(): String {          //메시지 보낸 시각 정보 반환
         try {
             var localDateTime = LocalDateTime.now()
             localDateTime.atZone(TimeZone.getDefault().toZoneId())
@@ -130,7 +130,7 @@ class ChatRoomActivity : AppCompatActivity() {
         }
     }
 
-    fun setupRecycler() {
+    fun setupRecycler() {            //목록 초기화 및 업데이트
         recycler_talks.layoutManager = LinearLayoutManager(this)
         recycler_talks.adapter = RecyclerMessagesAdapter(this, chatRoomKey, opponentUser.uid)
     }
