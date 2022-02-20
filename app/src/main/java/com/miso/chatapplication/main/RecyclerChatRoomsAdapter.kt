@@ -30,15 +30,15 @@ import kotlin.collections.ArrayList
 @RequiresApi(Build.VERSION_CODES.O)
 class RecyclerChatRoomsAdapter(val context: Context) :
     RecyclerView.Adapter<RecyclerChatRoomsAdapter.ViewHolder>() {
-    var chatRooms: ArrayList<ChatRoom> = arrayListOf()
-    var chatRoomKeys: ArrayList<String> = arrayListOf()
-    val myUid = FirebaseAuth.getInstance().currentUser?.uid.toString()
+    var chatRooms: ArrayList<ChatRoom> = arrayListOf()   //채팅방 목록
+    var chatRoomKeys: ArrayList<String> = arrayListOf()  //채팅방 키 목록
+    val myUid = FirebaseAuth.getInstance().currentUser?.uid.toString()   //현재 사용자 Uid
 
     init {
         setupAllUserList()
     }
 
-    fun setupAllUserList() {
+    fun setupAllUserList() {     //전체 채팅방 목록 초기화 및 업데이트
         FirebaseDatabase.getInstance().getReference("ChatRoom").child("chatRooms")
             .orderByChild("users/$myUid").equalTo(true)
             .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -61,28 +61,28 @@ class RecyclerChatRoomsAdapter(val context: Context) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        var userIdList = chatRooms[position].users!!.keys
-        var opponent = userIdList.first { !it.equals(myUid) }
-        FirebaseDatabase.getInstance().getReference("User").child("users").orderByChild("uid")
+        var userIdList = chatRooms[position].users!!.keys    //채팅방에 포함된 사용자 키 목록
+        var opponent = userIdList.first { !it.equals(myUid) }  //상대방 사용자 키
+        FirebaseDatabase.getInstance().getReference("User").child("users").orderByChild("uid")   //상대방 사용자 키를 포함하는 채팅방 불러오기
             .equalTo(opponent)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onCancelled(error: DatabaseError) {}
                 override fun onDataChange(snapshot: DataSnapshot) {
                     for (data in snapshot.children) {
-                        holder.chatRoomKey = data.key.toString()!!
-                        holder.opponentUser = data.getValue<User>()!!
-                        holder.txt_name.text = data.getValue<User>()!!.name.toString()
+                        holder.chatRoomKey = data.key.toString()!!             //채팅방 키 초기화
+                        holder.opponentUser = data.getValue<User>()!!         //상대방 정보 초기화
+                        holder.txt_name.text = data.getValue<User>()!!.name.toString()     //상대방 이름 초괴화
                     }
                 }
             })
-        holder.background.setOnClickListener()
+        holder.background.setOnClickListener()               //채팅방 항목 선택 시
         {
             try {
                 var intent = Intent(context, ChatRoomActivity::class.java)
-                intent.putExtra("ChatRoom", chatRooms.get(position))
-                intent.putExtra("Opponent", holder.opponentUser)
-                intent.putExtra("ChatRoomKey", chatRoomKeys[position])
-                context.startActivity(intent)
+                intent.putExtra("ChatRoom", chatRooms.get(position))      //채팅방 정보
+                intent.putExtra("Opponent", holder.opponentUser)          //상대방 사용자 정보
+                intent.putExtra("ChatRoomKey", chatRoomKeys[position])     //채팅방 키 정보
+                context.startActivity(intent)                            //해당 채팅방으로 이동
                 (context as AppCompatActivity).finish()
             }catch (e:Exception)
             {
@@ -91,34 +91,34 @@ class RecyclerChatRoomsAdapter(val context: Context) :
             }
         }
 
-        if (chatRooms[position].messages!!.size > 0) {
-            setupLastMessageAndDate(holder, position)
+        if (chatRooms[position].messages!!.size > 0) {         //채팅방 메시지가 존재하는 경우
+            setupLastMessageAndDate(holder, position)        //마지막 메시지 및 시각 초기화
             setupMessageCount(holder, position)
         }
     }
 
-    fun setupLastMessageAndDate(holder: ViewHolder, position: Int) {
+    fun setupLastMessageAndDate(holder: ViewHolder, position: Int) { //마지막 메시지 및 시각 초기화
         try {
             var lastMessage =
-                chatRooms[position].messages!!.values.sortedWith(compareBy({ it.sended_date }))
+                chatRooms[position].messages!!.values.sortedWith(compareBy({ it.sended_date }))    //메시지 목록에서 시각을 비교하여 가장 마지막 메시지  가져오기
                     .last()
-            holder.txt_message.text = lastMessage.content
-            holder.txt_date.text = getLastMessageTimeString(lastMessage.sended_date)
+            holder.txt_message.text = lastMessage.content                 //마지막 메시지 표시
+            holder.txt_date.text = getLastMessageTimeString(lastMessage.sended_date)   //마지막으로 전송된 시각 표시
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
-    fun setupMessageCount(holder: ViewHolder, position: Int) {
+    fun setupMessageCount(holder: ViewHolder, position: Int) {            //확인되지 않은 메시지 개수 표시
         try {
             var unconfirmedCount =
                 chatRooms[position].messages!!.filter {
-                    !it.value.confirmed && !it.value.senderUid.equals(
+                    !it.value.confirmed && !it.value.senderUid.equals(               //메시지 중 확인되지 않은 메시지 개수 가져오기
                         myUid
                     )
                 }.size
-            if (unconfirmedCount > 0) {
-                holder.txt_chatCount.visibility = View.VISIBLE
+            if (unconfirmedCount > 0) {              //확인되지 않은 메시지가 있을 경우
+                holder.txt_chatCount.visibility = View.VISIBLE           //개수 표시
                 holder.txt_chatCount.text = unconfirmedCount.toString()
             } else
                 holder.txt_chatCount.visibility = View.GONE
@@ -128,40 +128,40 @@ class RecyclerChatRoomsAdapter(val context: Context) :
         }
     }
 
-    fun getLastMessageTimeString(lastTimeString: String): String {
+    fun getLastMessageTimeString(lastTimeString: String): String {           //마지막 메시지가 전송된 시각 구하기
         try {
-            var currentTime = LocalDateTime.now().atZone(TimeZone.getDefault().toZoneId())
+            var currentTime = LocalDateTime.now().atZone(TimeZone.getDefault().toZoneId()) //현재 시각
             var dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss")
 
-            var messageMonth = lastTimeString.substring(4, 6).toInt()
+            var messageMonth = lastTimeString.substring(4, 6).toInt()                   //마지막 메시지 시각 월,일,시,분
             var messageDate = lastTimeString.substring(6, 8).toInt()
             var messageHour = lastTimeString.substring(8, 10).toInt()
             var messageMinute = lastTimeString.substring(10, 12).toInt()
 
-            var formattedCurrentTimeString = currentTime.format(dateTimeFormatter)
+            var formattedCurrentTimeString = currentTime.format(dateTimeFormatter)     //현 시각 월,일,시,분
             var currentMonth = formattedCurrentTimeString.substring(4, 6).toInt()
             var currentDate = formattedCurrentTimeString.substring(6, 8).toInt()
             var currentHour = formattedCurrentTimeString.substring(8, 10).toInt()
             var currentMinute = formattedCurrentTimeString.substring(10, 12).toInt()
 
-            var monthAgo = currentMonth - messageMonth
+            var monthAgo = currentMonth - messageMonth                           //현 시각과 마지막 메시지 시각과의 차이. 월,일,시,분
             var dayAgo = currentDate - messageDate
             var hourAgo = currentHour - messageHour
             var minuteAgo = currentMinute - messageMinute
 
-            if (monthAgo > 0)
+            if (monthAgo > 0)                                         //1개월 이상 차이 나는 경우
                 return monthAgo.toString() + "개월 전"
             else {
-                if (dayAgo > 0) {
+                if (dayAgo > 0) {                                  //1일 이상 차이 나는 경우
                     if (dayAgo == 1)
                         return "어제"
                     else
                         return dayAgo.toString() + "일 전"
                 } else {
                     if (hourAgo > 0)
-                        return hourAgo.toString() + "시간 전"
+                        return hourAgo.toString() + "시간 전"     //1시간 이상 차이 나는 경우
                     else {
-                        if (minuteAgo > 0)
+                        if (minuteAgo > 0)                       //1분 이상 차이 나는 경우
                             return minuteAgo.toString() + "분 전"
                         else
                             return "방금"
