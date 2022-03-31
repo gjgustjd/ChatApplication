@@ -1,7 +1,6 @@
 # ChatApplication
 ![login](https://user-images.githubusercontent.com/44759382/161033779-4db00c7d-118e-458e-bd77-5dfe2131fe7a.png)
 ![main](https://user-images.githubusercontent.com/44759382/161033824-ca443b81-ce26-45c4-9667-4ceef24c52fd.PNG)
-![add](https://user-images.githubusercontent.com/44759382/161033837-7ceaa98b-21c9-4b96-a61f-c0a8ed00d79e.PNG)
 ![chat](https://user-images.githubusercontent.com/44759382/161033839-00ad878c-cb86-4972-ac3b-b78f504740c7.PNG)
 
 Firebase Realtime Database를 기반으로 한 1:1 채팅 어플리케이션입니다.  
